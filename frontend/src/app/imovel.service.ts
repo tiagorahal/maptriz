@@ -4,9 +4,9 @@ import { Observable, tap } from 'rxjs';
 import { Imovel, ImovelInput } from './imovel';
 
 /**
- * Centraliza o acesso à API e mantém a lista de imóveis em memória como fonte de verdade.
- * As mutações atualizam esse estado a partir da resposta do servidor, sem um novo GET —
- * o que já prepara o terreno para a tarefa 3 (voltar da edição sem refetch).
+ * Centraliza o acesso à API e mantém em memória, como fonte de verdade, tanto a lista de imóveis
+ * quanto o estado dos filtros. Assim a navegação (ex.: voltar da edição para a listagem)
+ * reaproveita o que já está em memória, sem uma nova requisição.
  */
 @Injectable({ providedIn: 'root' })
 export class ImovelService {
@@ -15,32 +15,52 @@ export class ImovelService {
 
   readonly imoveis = signal<Imovel[]>([]);
   readonly carregando = signal(false);
+  readonly filtroProprietario = signal('');
+  readonly filtroMunicipio = signal('');
+
+  /** Se a lista já foi buscada nesta sessão (diferente de "lista vazia"). */
+  private carregado = false;
 
   /**
-   * Busca a lista no servidor, opcionalmente filtrada por proprietário e/ou município.
-   * O filtro é server-side (query params) — pensando na tarefa 6, onde a base é grande demais
-   * para filtrar no cliente.
+   * Carrega a lista só se ainda não tiver sido carregada nesta sessão. É o que garante o
+   * requisito da tarefa 3: ao voltar da edição, a listagem reaproveita a memória, sem novo GET.
    */
-  buscar(proprietario = '', municipio = ''): void {
+  carregarSeNecessario(): void {
+    if (!this.carregado) {
+      this.buscar();
+    }
+  }
+
+  /** Busca no servidor usando os filtros atuais. Sempre refaz a requisição (usado ao filtrar). */
+  buscar(): void {
     this.carregando.set(true);
     let params = new HttpParams();
-    if (proprietario.trim()) {
-      params = params.set('proprietario', proprietario.trim());
+    const proprietario = this.filtroProprietario().trim();
+    const municipio = this.filtroMunicipio().trim();
+    if (proprietario) {
+      params = params.set('proprietario', proprietario);
     }
-    if (municipio.trim()) {
-      params = params.set('municipio', municipio.trim());
+    if (municipio) {
+      params = params.set('municipio', municipio);
     }
     this.http.get<Imovel[]>(this.baseUrl, { params }).subscribe({
       next: (lista) => {
         this.imoveis.set(lista);
+        this.carregado = true;
         this.carregando.set(false);
       },
       error: () => this.carregando.set(false),
     });
   }
 
-  buscarPorId(id: number): Imovel | undefined {
+  /** Item já em memória (sem ir ao servidor) — a edição usa isto para não refazer o GET. */
+  daMemoria(id: number): Imovel | undefined {
     return this.imoveis().find((i) => i.id === id);
+  }
+
+  /** Fallback: busca um imóvel direto no servidor (acesso direto/refresh na página de edição). */
+  buscarUm(id: number): Observable<Imovel> {
+    return this.http.get<Imovel>(`${this.baseUrl}/${id}`);
   }
 
   criar(input: ImovelInput): Observable<Imovel> {
