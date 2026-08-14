@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -21,7 +21,7 @@ export class ImoveisLista implements OnInit {
     this.imoveis().reduce((soma, i) => soma + (Number(i.areaM2) || 0), 0)
   );
 
-  mensagem = '';
+  readonly mensagem = signal('');
 
   // Os filtros vivem no service para sobreviverem à navegação: ao voltar da edição, o texto
   // digitado e a lista filtrada continuam lá, sem refazer a requisição.
@@ -70,8 +70,8 @@ export class ImoveisLista implements OnInit {
       return;
     }
     this.service.excluir(i.id).subscribe({
-      next: () => (this.mensagem = 'Imóvel excluído!'),
-      error: () => (this.mensagem = 'Erro ao excluir. Tente novamente.'),
+      next: () => this.mensagem.set('Imóvel excluído!'),
+      error: () => this.mensagem.set('Erro ao excluir. Tente novamente.'),
     });
   }
 }

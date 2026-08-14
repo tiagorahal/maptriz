@@ -16,8 +16,8 @@
     <p>Carregando...</p>
   }
 
-  @if (mensagem) {
-    <p class="msg">{{ mensagem }}</p>
+  @if (mensagem()) {
+    <p class="msg">{{ mensagem() }}</p>
   }
 
   <p class="resumo">

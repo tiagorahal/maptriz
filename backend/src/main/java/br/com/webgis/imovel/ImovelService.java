@@ -10,9 +10,11 @@ import java.util.List;
 public class ImovelService {
 
 	private final ImovelRepository repository;
+	private final ProprietarioRepository proprietarioRepository;
 
-	public ImovelService(ImovelRepository repository) {
+	public ImovelService(ImovelRepository repository, ProprietarioRepository proprietarioRepository) {
 		this.repository = repository;
+		this.proprietarioRepository = proprietarioRepository;
 	}
 
 	@Transactional(readOnly = true)
@@ -20,7 +22,8 @@ public class ImovelService {
 		String p = proprietario == null ? "" : proprietario;
 		String m = municipio == null ? "" : municipio;
 		return repository
-				.findByProprietarioContainingIgnoreCaseAndMunicipioContainingIgnoreCase(p, m, Sort.by("proprietario"))
+				.findByProprietarioNomeContainingIgnoreCaseAndMunicipioContainingIgnoreCase(
+						p, m, Sort.by("proprietario.nome"))
 				.stream()
 				.map(ImovelResponse::de)
 				.toList();
@@ -57,7 +60,7 @@ public class ImovelService {
 	}
 
 	private void aplicar(Imovel imovel, ImovelRequest req) {
-		imovel.setProprietario(req.proprietario());
+		imovel.setProprietario(obterOuCriarProprietario(req.proprietario()));
 		imovel.setMunicipio(req.municipio());
 		imovel.setUf(req.uf());
 		imovel.setBairro(req.bairro());
@@ -67,5 +70,16 @@ public class ImovelService {
 		imovel.setLongitude(req.longitude());
 		imovel.setAreaM2(req.areaM2());
 		imovel.setAtivo(req.ativo());
+	}
+
+	/** Reaproveita o proprietário existente pelo nome (case-insensitive) ou cria um novo. */
+	private Proprietario obterOuCriarProprietario(String nome) {
+		String limpo = nome.trim();
+		return proprietarioRepository.findByNomeIgnoreCase(limpo)
+				.orElseGet(() -> {
+					Proprietario novo = new Proprietario();
+					novo.setNome(limpo);
+					return proprietarioRepository.save(novo);
+				});
 	}
 }

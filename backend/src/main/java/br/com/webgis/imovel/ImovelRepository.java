@@ -8,10 +8,15 @@ import java.util.List;
 public interface ImovelRepository extends JpaRepository<Imovel, Long> {
 
 	/**
-	 * Filtra por proprietário e município (ambos "contém", sem diferenciar maiúsculas).
-	 * Filtros ausentes chegam como string vazia, e {@code LIKE '%%'} casa com tudo — então o
-	 * mesmo método serve para listar tudo, filtrar por um campo ou pelos dois.
+	 * Filtra por nome do proprietário e por município (ambos "contém", sem diferenciar maiúsculas).
+	 * Filtros ausentes chegam como string vazia, e {@code LIKE '%%'} casa com tudo.
 	 */
-	List<Imovel> findByProprietarioContainingIgnoreCaseAndMunicipioContainingIgnoreCase(
-			String proprietario, String municipio, Sort sort);
+	List<Imovel> findByProprietarioNomeContainingIgnoreCaseAndMunicipioContainingIgnoreCase(
+			String proprietarioNome, String municipio, Sort sort);
+
+	/** Imóveis de um proprietário específico. */
+	List<Imovel> findByProprietarioId(Long proprietarioId, Sort sort);
+
+	/** Quantos imóveis um proprietário possui (para a listagem de proprietários). */
+	long countByProprietarioId(Long proprietarioId);
 }

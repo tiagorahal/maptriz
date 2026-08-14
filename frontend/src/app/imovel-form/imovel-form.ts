@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ImovelService } from '../imovel.service';
@@ -14,8 +14,9 @@ export class ImovelForm {
   private service = inject(ImovelService);
   private router = inject(Router);
 
-  salvando = false;
-  erro = '';
+  // App é zoneless: estado lido no template precisa ser signal para re-renderizar.
+  readonly salvando = signal(false);
+  readonly erro = signal('');
 
   form: ImovelInput = {
     proprietario: '',
@@ -31,13 +32,13 @@ export class ImovelForm {
   };
 
   salvar(): void {
-    this.salvando = true;
-    this.erro = '';
+    this.salvando.set(true);
+    this.erro.set('');
     this.service.criar(this.form).subscribe({
       next: () => this.router.navigate(['/imoveis']),
       error: (e) => {
-        this.salvando = false;
-        this.erro = this.mensagemErro(e);
+        this.salvando.set(false);
+        this.erro.set(this.mensagemErro(e));
       },
     });
   }

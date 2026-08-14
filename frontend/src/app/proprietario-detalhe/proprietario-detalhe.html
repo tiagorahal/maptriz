@@ -1,0 +1,38 @@
+<div class="caixa">
+  <a class="voltar" routerLink="/proprietarios">← Proprietários</a>
+
+  <h2>Imóveis de {{ nome() }}</h2>
+
+  @if (carregando()) {
+    <p>Carregando...</p>
+  } @else {
+    <p class="resumo">{{ imoveis().length }} imóvel(is)</p>
+
+    @if (imoveis().length === 0) {
+      <p class="vazio">Este proprietário não tem imóveis.</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Município</th>
+            <th>Endereço</th>
+            <th>UF</th>
+            <th>Área m²</th>
+            <th>Ativo</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (i of imoveis(); track i.id) {
+            <tr>
+              <td>{{ i.municipio }}</td>
+              <td>{{ endereco(i) }}</td>
+              <td>{{ i.uf }}</td>
+              <td>{{ i.areaM2 }}</td>
+              <td>{{ i.ativo ? 'Sim' : 'Não' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  }
+</div>
