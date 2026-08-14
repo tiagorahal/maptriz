@@ -1,6 +1,11 @@
+-- Seed idempotente: so insere quando a tabela esta vazia.
+-- Como spring.sql.init.mode=always roda este arquivo a cada boot e o ddl-auto=update nao
+-- recria o schema, um INSERT solto reinseria os 12 imoveis toda subida (12, 24, 36...).
+-- O WHERE NOT EXISTS abaixo garante que o seed rode uma unica vez.
 INSERT INTO imovel
     (proprietario, municipio, uf, bairro, rua, numero, latitude, longitude, area_m2, ativo, criado_em, atualizado_em)
-VALUES
+SELECT *
+FROM (VALUES
     ('Maria Aparecida Souza',   'São Paulo',      'SP', 'Pinheiros',        'Rua dos Pinheiros',        '1245',  -23.5629000, -46.6944000,  320.50, TRUE, NOW(), NOW()),
     ('João Carlos Ferreira',    'São Paulo',      'SP', 'Santana',          'Avenida Braz Leme',        '890',   -23.5010000, -46.6280000,  450.00, TRUE, NOW(), NOW()),
     ('Ana Beatriz Lima',        'Rio de Janeiro', 'RJ', 'Copacabana',       'Rua Barata Ribeiro',       '512',   -22.9686000, -43.1869000,  180.75, TRUE, NOW(), NOW()),
@@ -12,4 +17,6 @@ VALUES
     ('Juliana Martins Rocha',   'Recife',         'PE', 'Boa Viagem',       'Avenida Boa Viagem',       '4500',   -8.1200000, -34.9000000,  198.40, TRUE, NOW(), NOW()),
     ('Marcos Vinícius Teixeira','Fortaleza',      'CE', 'Aldeota',          'Avenida Santos Dumont',    '3131',   -3.7350000, -38.4950000,  340.00, TRUE, NOW(), NOW()),
     ('Camila Freitas Andrade',  'Goiânia',        'GO', 'Setor Bueno',      'Rua T-55',                 '820',   -16.7050000, -49.2720000,  410.25, TRUE, NOW(), NOW()),
-    ('Eduardo Pacheco Silva',   'Florianópolis',  'SC', 'Campeche',         'Avenida Pequeno Príncipe', 'S/N',   -27.6780000, -48.4900000,  520.00, TRUE, NOW(), NOW());
+    ('Eduardo Pacheco Silva',   'Florianópolis',  'SC', 'Campeche',         'Avenida Pequeno Príncipe', 'S/N',   -27.6780000, -48.4900000,  520.00, TRUE, NOW(), NOW())
+) AS seed
+WHERE NOT EXISTS (SELECT 1 FROM imovel);
