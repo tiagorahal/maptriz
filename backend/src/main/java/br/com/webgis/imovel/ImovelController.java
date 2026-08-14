@@ -1,6 +1,7 @@
 package br.com.webgis.imovel;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,39 +10,46 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/imoveis")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "${app.cors.origin:http://localhost:4200}")
 public class ImovelController {
 
-	@Autowired
-	private ImovelService service;
+	private final ImovelService service;
+
+	public ImovelController(ImovelService service) {
+		this.service = service;
+	}
 
 	@GetMapping
-	public Object listar() {
-		System.out.println("listando imoveis");
+	public List<ImovelResponse> listar() {
 		return service.listar();
 	}
 
 	@GetMapping("/{id}")
-	public Object buscar(@PathVariable String id) {
+	public ImovelResponse buscar(@PathVariable Long id) {
 		return service.buscarPorId(id);
 	}
 
 	@PostMapping
-	public Object criar(@RequestBody Object corpo) {
-		return service.criar(corpo);
+	@ResponseStatus(HttpStatus.CREATED)
+	public ImovelResponse criar(@Valid @RequestBody ImovelRequest req) {
+		return service.criar(req);
 	}
 
 	@PutMapping("/{id}")
-	public Object atualizar(@PathVariable String id, @RequestBody Object corpo) {
-		return service.atualizar(id, corpo);
+	public ImovelResponse atualizar(@PathVariable Long id, @Valid @RequestBody ImovelRequest req) {
+		return service.atualizar(id, req);
 	}
 
 	@DeleteMapping("/{id}")
-	public Object excluir(@PathVariable String id) {
-		return service.excluir(id);
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void excluir(@PathVariable Long id) {
+		service.excluir(id);
 	}
 }

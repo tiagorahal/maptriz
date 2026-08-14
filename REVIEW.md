@@ -54,3 +54,26 @@ cada reinício e o formulário de edição que altera a linha antes de salvar (`
 Ficam **de fora nesta etapa, por escolha**: paginação (#8, é a tarefa 6 da Parte 2, feita lá),
 OSIV (#12), limpeza de `println` (#13) e a modernização estética do Angular (#14) — baixo risco,
 alto ruído; melhor gastar o tempo no que é crítico e no que a Parte 2 exige.
+
+## Resultado do refactor (Parte 1) — antes × depois
+
+A camada de dados foi reescrita: `EntityManager` + SQL concatenado → **Spring Data JPA** com
+`ImovelRepository`, entidade encapsulada, **DTOs** (`ImovelRequest`/`ImovelResponse`) com **Bean
+Validation**, e um **`@RestControllerAdvice`** para erros enxutos. Verificado no backend rodando:
+
+| Caso | Antes | Depois |
+|---|---|---|
+| POST nome com apóstrofo `O'Brien` | 500 + stack trace vazada (SQLi) | **201 Created**, gravado corretamente |
+| POST latitude/longitude nulos | 200, inseria com NULL | **400** `{campos:{latitude,longitude}}`, não insere |
+| DELETE id inexistente `99999` | 200 `{status:ok}` (fantasma) | **404** |
+| DELETE id existente | 200 | **204 No Content** |
+| Corpo de erro | trazia `"trace"` com a pilha | enxuto, sem trace |
+| Reboot do backend | seed reinseria (12 → 24) | **idempotente** (segue 12) |
+
+O que a reescrita eliminou: #1 (SQLi), #3 (seed), #4 (trace vazada), #5 (catch contraditório),
+#6 (validação/over-posting), #7 (arquitetura) e a maior parte do #2 (semântica de status correta).
+Além disso: credenciais externalizadas via env (#10), CORS restrito à origem do front (#11) e OSIV
+desligado (#12).
+
+Fica para a **Parte 2 (tarefa 1)**, de propósito, o tratamento de erro no Angular e o bug de
+aliasing (#9) — porque o componente é reestruturado lá, e não faz sentido reescrevê-lo duas vezes.
