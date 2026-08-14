@@ -1,0 +1,53 @@
+<div class="caixa">
+  <div class="cabecalho">
+    <h2>Imóveis</h2>
+    <a class="botao" routerLink="/imoveis/novo">+ Novo imóvel</a>
+  </div>
+
+  @if (carregando()) {
+    <p>Carregando...</p>
+  }
+
+  @if (mensagem) {
+    <p class="msg">{{ mensagem }}</p>
+  }
+
+  <p class="resumo">
+    {{ imoveis().length }} imóvel(is) — área total: {{ areaTotal().toFixed(2) }} m²
+  </p>
+
+  @if (imoveis().length === 0 && !carregando()) {
+    <p class="vazio">Nenhum imóvel cadastrado.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Proprietário</th>
+          <th>Endereço</th>
+          <th>Município</th>
+          <th>UF</th>
+          <th>Lat</th>
+          <th>Long</th>
+          <th>Área m²</th>
+          <th>Ativo</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (i of imoveis(); track i.id) {
+          <tr>
+            <td>{{ i.proprietario }}</td>
+            <td>{{ endereco(i) }}</td>
+            <td>{{ i.municipio }}</td>
+            <td>{{ i.uf }}</td>
+            <td>{{ i.latitude }}</td>
+            <td>{{ i.longitude }}</td>
+            <td>{{ i.areaM2 }}</td>
+            <td>{{ i.ativo ? 'Sim' : 'Não' }}</td>
+            <td><button (click)="excluir(i)">Excluir</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
