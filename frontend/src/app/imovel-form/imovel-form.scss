@@ -31,28 +31,14 @@
   cursor: pointer;
 }
 
-.msg {
-  color: green;
+.botao {
+  display: inline-block;
+  padding: 5px 12px;
+  background: #7f8c8d;
+  color: #fff;
+  text-decoration: none;
 }
 
-.resumo {
-  font-size: 13px;
-  color: #555;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-}
-
-table th,
-table td {
-  border: 1px solid #ddd;
-  padding: 5px;
-  text-align: left;
-}
-
-table th {
-  background: #eee;
+.erro {
+  color: #c0392b;
 }

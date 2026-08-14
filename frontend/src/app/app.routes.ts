@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
-import { Imoveis } from './imoveis/imoveis';
+import { ImoveisLista } from './imoveis-lista/imoveis-lista';
+import { ImovelForm } from './imovel-form/imovel-form';
 
 export const routes: Routes = [
-  { path: '', component: Imoveis },
-  { path: 'imoveis', component: Imoveis },
-  { path: '**', component: Imoveis }
+  { path: '', pathMatch: 'full', redirectTo: 'imoveis' },
+  { path: 'imoveis', component: ImoveisLista },
+  { path: 'imoveis/novo', component: ImovelForm },
+  { path: '**', redirectTo: 'imoveis' },
 ];
