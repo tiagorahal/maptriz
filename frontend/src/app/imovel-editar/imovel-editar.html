@@ -1,6 +1,6 @@
-@if (carregando) {
+@if (carregando()) {
   <div class="caixa"><p>Carregando...</p></div>
-} @else if (naoEncontrado) {
+} @else if (naoEncontrado()) {
   <div class="caixa">
     <p class="erro">Imóvel não encontrado.</p>
     <a class="botao" routerLink="/imoveis">Voltar para a listagem</a>
@@ -36,13 +36,13 @@
         <label><input type="checkbox" name="ativo" [(ngModel)]="form.ativo"> Ativo</label>
       </div>
 
-      @if (erro) {
-        <p class="erro">{{ erro }}</p>
+      @if (erro()) {
+        <p class="erro">{{ erro() }}</p>
       }
 
       <div class="linha">
-        <button type="submit" [disabled]="f.invalid || salvando">
-          {{ salvando ? 'Salvando...' : 'Salvar' }}
+        <button type="submit" [disabled]="f.invalid || salvando()">
+          {{ salvando() ? 'Salvando...' : 'Salvar' }}
         </button>
         <a class="botao" routerLink="/imoveis">Cancelar</a>
       </div>

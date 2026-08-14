@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ImovelService } from '../imovel.service';
@@ -16,10 +16,11 @@ export class ImovelEditar implements OnInit {
   private route = inject(ActivatedRoute);
 
   id = 0;
-  carregando = false;
-  salvando = false;
-  naoEncontrado = false;
-  erro = '';
+  // App é zoneless: estado lido no template precisa ser signal para re-renderizar.
+  readonly carregando = signal(false);
+  readonly salvando = signal(false);
+  readonly naoEncontrado = signal(false);
+  readonly erro = signal('');
 
   form: ImovelInput = {
     proprietario: '',
@@ -43,15 +44,15 @@ export class ImovelEditar implements OnInit {
       this.preencher(emMemoria);
     } else {
       // Acesso direto/refresh: a lista não está em memória, então busca só este imóvel.
-      this.carregando = true;
+      this.carregando.set(true);
       this.service.buscarUm(this.id).subscribe({
         next: (i) => {
           this.preencher(i);
-          this.carregando = false;
+          this.carregando.set(false);
         },
         error: () => {
-          this.naoEncontrado = true;
-          this.carregando = false;
+          this.naoEncontrado.set(true);
+          this.carregando.set(false);
         },
       });
     }
@@ -75,13 +76,13 @@ export class ImovelEditar implements OnInit {
   }
 
   salvar(): void {
-    this.salvando = true;
-    this.erro = '';
+    this.salvando.set(true);
+    this.erro.set('');
     this.service.atualizar(this.id, this.form).subscribe({
       next: () => this.router.navigate(['/imoveis']),
       error: (e) => {
-        this.salvando = false;
-        this.erro = this.mensagemErro(e);
+        this.salvando.set(false);
+        this.erro.set(this.mensagemErro(e));
       },
     });
   }

@@ -1,0 +1,45 @@
+.caixa {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.caixa h2 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.voltar {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #34495e;
+  text-decoration: none;
+}
+
+.resumo {
+  font-size: 13px;
+  color: #555;
+}
+
+.vazio {
+  color: #888;
+  font-style: italic;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: left;
+}
+
+table th {
+  background: #eee;
+}
