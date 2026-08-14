@@ -1,11 +1,14 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ImovelService } from '../imovel.service';
 import { Imovel } from '../imovel';
 
 @Component({
   selector: 'app-imoveis-lista',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './imoveis-lista.html',
   styleUrl: './imoveis-lista.scss',
 })
@@ -18,10 +21,31 @@ export class ImoveisLista implements OnInit {
     this.imoveis().reduce((soma, i) => soma + (Number(i.areaM2) || 0), 0)
   );
 
+  filtroProprietario = '';
+  filtroMunicipio = '';
   mensagem = '';
 
+  // Debounce: só dispara a busca 300ms depois da última tecla, e só se algo mudou.
+  private filtros$ = new Subject<string>();
+
+  constructor() {
+    this.filtros$
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
+      .subscribe(() => this.service.buscar(this.filtroProprietario, this.filtroMunicipio));
+  }
+
   ngOnInit(): void {
-    this.service.carregar();
+    this.service.buscar();
+  }
+
+  aoFiltrar(): void {
+    this.filtros$.next(`${this.filtroProprietario}|${this.filtroMunicipio}`);
+  }
+
+  limparFiltros(): void {
+    this.filtroProprietario = '';
+    this.filtroMunicipio = '';
+    this.service.buscar();
   }
 
   endereco(i: Imovel): string {

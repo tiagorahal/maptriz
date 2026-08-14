@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Imovel, ImovelInput } from './imovel';
 
@@ -16,22 +16,23 @@ export class ImovelService {
   readonly imoveis = signal<Imovel[]>([]);
   readonly carregando = signal(false);
 
-  /** Marca se a lista já foi buscada do servidor nesta sessão (diferente de "lista vazia"). */
-  private carregado = false;
-
   /**
-   * Carrega a lista uma vez por sessão. Se já foi carregada, reaproveita o que está em memória
-   * (base da tarefa 3: voltar sem refetch). Use forcar=true para recarregar de propósito.
+   * Busca a lista no servidor, opcionalmente filtrada por proprietário e/ou município.
+   * O filtro é server-side (query params) — pensando na tarefa 6, onde a base é grande demais
+   * para filtrar no cliente.
    */
-  carregar(forcar = false): void {
-    if (this.carregado && !forcar) {
-      return;
-    }
+  buscar(proprietario = '', municipio = ''): void {
     this.carregando.set(true);
-    this.http.get<Imovel[]>(this.baseUrl).subscribe({
+    let params = new HttpParams();
+    if (proprietario.trim()) {
+      params = params.set('proprietario', proprietario.trim());
+    }
+    if (municipio.trim()) {
+      params = params.set('municipio', municipio.trim());
+    }
+    this.http.get<Imovel[]>(this.baseUrl, { params }).subscribe({
       next: (lista) => {
         this.imoveis.set(lista);
-        this.carregado = true;
         this.carregando.set(false);
       },
       error: () => this.carregando.set(false),

@@ -4,6 +4,14 @@
     <a class="botao" routerLink="/imoveis/novo">+ Novo imóvel</a>
   </div>
 
+  <div class="filtros">
+    <input placeholder="Filtrar por proprietário"
+           [(ngModel)]="filtroProprietario" (ngModelChange)="aoFiltrar()">
+    <input placeholder="Filtrar por município"
+           [(ngModel)]="filtroMunicipio" (ngModelChange)="aoFiltrar()">
+    <button type="button" (click)="limparFiltros()">Limpar</button>
+  </div>
+
   @if (carregando()) {
     <p>Carregando...</p>
   }
@@ -17,7 +25,7 @@
   </p>
 
   @if (imoveis().length === 0 && !carregando()) {
-    <p class="vazio">Nenhum imóvel cadastrado.</p>
+    <p class="vazio">Nenhum imóvel encontrado.</p>
   } @else {
     <table>
       <thead>
