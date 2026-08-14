@@ -52,7 +52,10 @@
             <td>{{ i.longitude }}</td>
             <td>{{ i.areaM2 }}</td>
             <td>{{ i.ativo ? 'Sim' : 'Não' }}</td>
-            <td><button (click)="excluir(i)">Excluir</button></td>
+            <td class="acoes">
+              <a [routerLink]="['/imoveis', i.id, 'editar']">Editar</a>
+              <button (click)="excluir(i)">Excluir</button>
+            </td>
           </tr>
         }
       </tbody>

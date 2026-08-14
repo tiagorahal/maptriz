@@ -21,9 +21,22 @@ export class ImoveisLista implements OnInit {
     this.imoveis().reduce((soma, i) => soma + (Number(i.areaM2) || 0), 0)
   );
 
-  filtroProprietario = '';
-  filtroMunicipio = '';
   mensagem = '';
+
+  // Os filtros vivem no service para sobreviverem à navegação: ao voltar da edição, o texto
+  // digitado e a lista filtrada continuam lá, sem refazer a requisição.
+  get filtroProprietario(): string {
+    return this.service.filtroProprietario();
+  }
+  set filtroProprietario(v: string) {
+    this.service.filtroProprietario.set(v);
+  }
+  get filtroMunicipio(): string {
+    return this.service.filtroMunicipio();
+  }
+  set filtroMunicipio(v: string) {
+    this.service.filtroMunicipio.set(v);
+  }
 
   // Debounce: só dispara a busca 300ms depois da última tecla, e só se algo mudou.
   private filtros$ = new Subject<string>();
@@ -31,11 +44,11 @@ export class ImoveisLista implements OnInit {
   constructor() {
     this.filtros$
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
-      .subscribe(() => this.service.buscar(this.filtroProprietario, this.filtroMunicipio));
+      .subscribe(() => this.service.buscar());
   }
 
   ngOnInit(): void {
-    this.service.buscar();
+    this.service.carregarSeNecessario();
   }
 
   aoFiltrar(): void {

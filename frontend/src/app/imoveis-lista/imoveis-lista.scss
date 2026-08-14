@@ -76,3 +76,12 @@ button {
   padding: 5px 12px;
   cursor: pointer;
 }
+
+.acoes {
+  white-space: nowrap;
+}
+
+.acoes a {
+  margin-right: 8px;
+  color: #34495e;
+}
