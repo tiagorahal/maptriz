@@ -16,8 +16,12 @@ public class ImovelService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ImovelResponse> listar() {
-		return repository.findAll(Sort.by("proprietario")).stream()
+	public List<ImovelResponse> buscar(String proprietario, String municipio) {
+		String p = proprietario == null ? "" : proprietario;
+		String m = municipio == null ? "" : municipio;
+		return repository
+				.findByProprietarioContainingIgnoreCaseAndMunicipioContainingIgnoreCase(p, m, Sort.by("proprietario"))
+				.stream()
 				.map(ImovelResponse::de)
 				.toList();
 	}

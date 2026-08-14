@@ -26,6 +26,21 @@
   cursor: pointer;
 }
 
+.filtros {
+  margin: 10px 0;
+}
+
+.filtros input {
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+}
+
+.filtros button {
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
 .resumo {
   font-size: 13px;
   color: #555;
