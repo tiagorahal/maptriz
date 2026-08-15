@@ -22,4 +22,7 @@ public interface ImovelRepository extends JpaRepository<Imovel, Long> {
 
 	/** Quantos imóveis um proprietário possui (para a listagem de proprietários). */
 	long countByProprietarioId(Long proprietarioId);
+
+	/** Imóveis ainda sem polígono — usado no backfill de geometria no boot. */
+	List<Imovel> findByPoligonoIsNull();
 }

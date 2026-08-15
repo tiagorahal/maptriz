@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -12,10 +13,13 @@ public class ImovelService {
 
 	private final ImovelRepository repository;
 	private final ProprietarioRepository proprietarioRepository;
+	private final GeometriaService geometriaService;
 
-	public ImovelService(ImovelRepository repository, ProprietarioRepository proprietarioRepository) {
+	public ImovelService(ImovelRepository repository, ProprietarioRepository proprietarioRepository,
+			GeometriaService geometriaService) {
 		this.repository = repository;
 		this.proprietarioRepository = proprietarioRepository;
+		this.geometriaService = geometriaService;
 	}
 
 	@Transactional(readOnly = true)
@@ -47,6 +51,7 @@ public class ImovelService {
 	public ImovelResponse criar(ImovelRequest req) {
 		Imovel imovel = new Imovel();
 		aplicar(imovel, req);
+		aplicarGeometria(imovel, req);
 		return ImovelResponse.de(repository.save(imovel));
 	}
 
@@ -55,6 +60,7 @@ public class ImovelService {
 		Imovel imovel = repository.findById(id)
 				.orElseThrow(() -> new ImovelNaoEncontradoException(id));
 		aplicar(imovel, req);
+		aplicarGeometria(imovel, req);
 		return ImovelResponse.de(repository.save(imovel));
 	}
 
@@ -88,5 +94,18 @@ public class ImovelService {
 					novo.setNome(limpo);
 					return proprietarioRepository.save(novo);
 				});
+	}
+
+	/** Define o polígono do imóvel a partir das dimensões informadas (ou de um quadrado √área). */
+	private void aplicarGeometria(Imovel imovel, ImovelRequest req) {
+		BigDecimal largura = req.largura();
+		BigDecimal comprimento = req.comprimento();
+		if (largura == null || comprimento == null) {
+			BigDecimal lado = BigDecimal.valueOf(Math.sqrt(req.areaM2().doubleValue()));
+			largura = lado;
+			comprimento = lado;
+		}
+		imovel.setPoligono(
+				geometriaService.gerarPoligonoWkt(req.latitude(), req.longitude(), largura, comprimento));
 	}
 }
