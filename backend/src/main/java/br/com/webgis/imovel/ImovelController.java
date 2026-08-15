@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/imoveis")
 @CrossOrigin(origins = "${app.cors.origin:http://localhost:4200}")
@@ -33,6 +35,11 @@ public class ImovelController {
 			@RequestParam(required = false) String municipio,
 			@PageableDefault(size = 20, sort = "proprietario.nome") Pageable pageable) {
 		return PageResponse.de(service.buscar(proprietario, municipio, pageable));
+	}
+
+	@GetMapping("/mapa")
+	public List<PontoImovelResponse> mapa() {
+		return service.pontos();
 	}
 
 	@GetMapping("/{id}")
