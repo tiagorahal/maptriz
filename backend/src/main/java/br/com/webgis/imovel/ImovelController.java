@@ -1,6 +1,8 @@
 package br.com.webgis.imovel;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/imoveis")
 @CrossOrigin(origins = "${app.cors.origin:http://localhost:4200}")
@@ -28,10 +28,11 @@ public class ImovelController {
 	}
 
 	@GetMapping
-	public List<ImovelResponse> listar(
+	public PageResponse<ImovelResponse> listar(
 			@RequestParam(required = false) String proprietario,
-			@RequestParam(required = false) String municipio) {
-		return service.buscar(proprietario, municipio);
+			@RequestParam(required = false) String municipio,
+			@PageableDefault(size = 20, sort = "proprietario.nome") Pageable pageable) {
+		return PageResponse.de(service.buscar(proprietario, municipio, pageable));
 	}
 
 	@GetMapping("/{id}")

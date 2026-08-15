@@ -17,3 +17,12 @@ export interface Imovel {
 
 // O que o formulário envia — sem id, sem proprietarioId (envia o nome) e sem auditoria.
 export type ImovelInput = Omit<Imovel, 'id' | 'proprietarioId' | 'criadoEm' | 'atualizadoEm'>;
+
+// Envelope de paginação retornado pela API (espelha o PageResponse do backend).
+export interface Pagina<T> {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}

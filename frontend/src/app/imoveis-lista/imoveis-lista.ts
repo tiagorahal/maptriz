@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -17,14 +17,13 @@ export class ImoveisLista implements OnInit {
 
   readonly imoveis = this.service.imoveis;
   readonly carregando = this.service.carregando;
-  readonly areaTotal = computed(() =>
-    this.imoveis().reduce((soma, i) => soma + (Number(i.areaM2) || 0), 0)
-  );
+  readonly pagina = this.service.pagina;
+  readonly totalPaginas = this.service.totalPaginas;
+  readonly totalElementos = this.service.totalElementos;
 
   readonly mensagem = signal('');
 
-  // Os filtros vivem no service para sobreviverem à navegação: ao voltar da edição, o texto
-  // digitado e a lista filtrada continuam lá, sem refazer a requisição.
+  // Os filtros vivem no service para sobreviverem à navegação (voltar da edição preserva o estado).
   get filtroProprietario(): string {
     return this.service.filtroProprietario();
   }
@@ -44,7 +43,7 @@ export class ImoveisLista implements OnInit {
   constructor() {
     this.filtros$
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
-      .subscribe(() => this.service.buscar());
+      .subscribe(() => this.service.filtrar());
   }
 
   ngOnInit(): void {
@@ -58,7 +57,15 @@ export class ImoveisLista implements OnInit {
   limparFiltros(): void {
     this.filtroProprietario = '';
     this.filtroMunicipio = '';
-    this.service.buscar();
+    this.service.filtrar();
+  }
+
+  paginaAnterior(): void {
+    this.service.irParaPagina(this.pagina() - 1);
+  }
+
+  proximaPagina(): void {
+    this.service.irParaPagina(this.pagina() + 1);
   }
 
   endereco(i: Imovel): string {

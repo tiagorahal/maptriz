@@ -1,10 +1,9 @@
 package br.com.webgis.imovel;
 
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class ImovelService {
@@ -18,15 +17,12 @@ public class ImovelService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<ImovelResponse> buscar(String proprietario, String municipio) {
+	public Page<ImovelResponse> buscar(String proprietario, String municipio, Pageable pageable) {
 		String p = proprietario == null ? "" : proprietario;
 		String m = municipio == null ? "" : municipio;
 		return repository
-				.findByProprietarioNomeContainingIgnoreCaseAndMunicipioContainingIgnoreCase(
-						p, m, Sort.by("proprietario.nome"))
-				.stream()
-				.map(ImovelResponse::de)
-				.toList();
+				.findByProprietarioNomeContainingIgnoreCaseAndMunicipioContainingIgnoreCase(p, m, pageable)
+				.map(ImovelResponse::de);
 	}
 
 	@Transactional(readOnly = true)
