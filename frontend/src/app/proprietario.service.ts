@@ -1,12 +1,14 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Proprietario } from './proprietario';
 import { Imovel } from './imovel';
+import { ImovelService } from './imovel.service';
 
 @Injectable({ providedIn: 'root' })
 export class ProprietarioService {
   private http = inject(HttpClient);
+  private imovelService = inject(ImovelService);
   private readonly baseUrl = 'http://localhost:8080/api/proprietarios';
 
   readonly proprietarios = signal<Proprietario[]>([]);
@@ -30,5 +32,16 @@ export class ProprietarioService {
 
   imoveisDe(id: number): Observable<Imovel[]> {
     return this.http.get<Imovel[]>(`${this.baseUrl}/${id}/imoveis`);
+  }
+
+  renomear(id: number, nome: string): Observable<Proprietario> {
+    return this.http.put<Proprietario>(`${this.baseUrl}/${id}`, { nome }).pipe(
+      tap((atualizado) => {
+        // Atualiza a lista de proprietários em memória...
+        this.proprietarios.update((lista) => lista.map((p) => (p.id === id ? atualizado : p)));
+        // ...e propaga o novo nome para os imóveis já carregados (o backend já propagou via FK).
+        this.imovelService.atualizarNomeProprietario(id, atualizado.nome);
+      })
+    );
   }
 }

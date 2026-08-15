@@ -1,8 +1,11 @@
 package br.com.webgis.imovel;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,5 +30,10 @@ public class ProprietarioController {
 	@GetMapping("/{id}/imoveis")
 	public List<ImovelResponse> imoveis(@PathVariable Long id) {
 		return service.imoveisDoProprietario(id);
+	}
+
+	@PutMapping("/{id}")
+	public ProprietarioResponse renomear(@PathVariable Long id, @Valid @RequestBody ProprietarioRequest req) {
+		return service.renomear(id, req.nome());
 	}
 }

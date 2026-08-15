@@ -1,5 +1,6 @@
 export interface Imovel {
   id: number;
+  proprietarioId: number;
   proprietario: string;
   municipio: string;
   uf: string;
@@ -14,5 +15,5 @@ export interface Imovel {
   atualizadoEm?: string;
 }
 
-// O que o formulário envia — sem id nem campos de auditoria (o backend controla isso).
-export type ImovelInput = Omit<Imovel, 'id' | 'criadoEm' | 'atualizadoEm'>;
+// O que o formulário envia — sem id, sem proprietarioId (envia o nome) e sem auditoria.
+export type ImovelInput = Omit<Imovel, 'id' | 'proprietarioId' | 'criadoEm' | 'atualizadoEm'>;

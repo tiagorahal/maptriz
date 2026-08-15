@@ -17,6 +17,37 @@
   text-decoration: none;
 }
 
+.titulo-nome .link {
+  margin-left: 10px;
+  font-size: 12px;
+  font-weight: normal;
+  background: none;
+  border: none;
+  color: #2d6cb3;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.renomear {
+  margin-bottom: 10px;
+}
+
+.renomear input {
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+}
+
+.renomear button {
+  padding: 5px 12px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.erro {
+  color: #c0392b;
+}
+
 .resumo {
   font-size: 13px;
   color: #555;

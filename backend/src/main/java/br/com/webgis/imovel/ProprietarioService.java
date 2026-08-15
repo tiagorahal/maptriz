@@ -31,4 +31,23 @@ public class ProprietarioService {
 				.map(ImovelResponse::de)
 				.toList();
 	}
+
+	@Transactional
+	public ProprietarioResponse renomear(Long id, String nome) {
+		String limpo = nome.trim();
+		Proprietario p = proprietarioRepository.findById(id)
+				.orElseThrow(() -> new ProprietarioNaoEncontradoException(id));
+
+		// O novo nome não pode colidir com o de OUTRO proprietário (nome é único).
+		proprietarioRepository.findByNomeIgnoreCase(limpo).ifPresent(existente -> {
+			if (!existente.getId().equals(id)) {
+				throw new NomeProprietarioEmUsoException(limpo);
+			}
+		});
+
+		p.setNome(limpo);
+		proprietarioRepository.save(p);
+		// A FK faz a mudança valer para TODOS os imóveis dele — sem tocar em cada linha de imovel.
+		return new ProprietarioResponse(p.getId(), p.getNome(), imovelRepository.countByProprietarioId(id));
+	}
 }

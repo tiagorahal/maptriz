@@ -1,6 +1,7 @@
 package br.com.webgis.web;
 
 import br.com.webgis.imovel.ImovelNaoEncontradoException;
+import br.com.webgis.imovel.NomeProprietarioEmUsoException;
 import br.com.webgis.imovel.ProprietarioNaoEncontradoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,6 +31,12 @@ public class ApiExceptionHandler {
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public Map<String, Object> proprietarioNaoEncontrado(ProprietarioNaoEncontradoException ex) {
 		return corpo(HttpStatus.NOT_FOUND, ex.getMessage());
+	}
+
+	@ExceptionHandler(NomeProprietarioEmUsoException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	public Map<String, Object> nomeEmUso(NomeProprietarioEmUsoException ex) {
+		return corpo(HttpStatus.CONFLICT, ex.getMessage());
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
