@@ -26,3 +26,12 @@ export interface Pagina<T> {
   totalElements: number;
   totalPages: number;
 }
+
+// Projeção leve para o mapa (espelha o PontoImovelResponse do backend).
+export interface PontoImovel {
+  id: number;
+  proprietario: string;
+  municipio: string;
+  latitude: number;
+  longitude: number;
+}

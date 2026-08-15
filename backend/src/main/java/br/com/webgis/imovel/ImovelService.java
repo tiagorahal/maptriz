@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class ImovelService {
 
@@ -23,6 +25,15 @@ public class ImovelService {
 		return repository
 				.findByProprietarioNomeContainingIgnoreCaseAndMunicipioContainingIgnoreCase(p, m, pageable)
 				.map(ImovelResponse::de);
+	}
+
+	/**
+	 * Pontos para o mapa (todos os imóveis, projeção leve). Para volume muito grande, o passo
+	 * seguinte seria filtrar pela área visível do mapa (bounding box) — fora do escopo aqui.
+	 */
+	@Transactional(readOnly = true)
+	public List<PontoImovelResponse> pontos() {
+		return repository.findAll().stream().map(PontoImovelResponse::de).toList();
 	}
 
 	@Transactional(readOnly = true)

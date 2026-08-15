@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { Imovel, ImovelInput, Pagina } from './imovel';
+import { Imovel, ImovelInput, Pagina, PontoImovel } from './imovel';
 
 /**
  * Acesso à API de imóveis com paginação no servidor. Mantém em memória, como fonte de verdade,
@@ -81,6 +81,11 @@ export class ImovelService {
   /** Fallback: busca um imóvel direto no servidor (acesso direto/refresh na edição). */
   buscarUm(id: number): Observable<Imovel> {
     return this.http.get<Imovel>(`${this.baseUrl}/${id}`);
+  }
+
+  /** Pontos (coordenadas) de todos os imóveis, para o mapa. */
+  pontos(): Observable<PontoImovel[]> {
+    return this.http.get<PontoImovel[]>(`${this.baseUrl}/mapa`);
   }
 
   criar(input: ImovelInput): Observable<Imovel> {
