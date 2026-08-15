@@ -1,7 +1,23 @@
 <div class="caixa">
   <a class="voltar" routerLink="/proprietarios">← Proprietários</a>
 
-  <h2>Imóveis de {{ nome() }}</h2>
+  @if (editando()) {
+    <div class="renomear">
+      <input [(ngModel)]="novoNome" placeholder="Novo nome do proprietário">
+      <button type="button" [disabled]="salvandoNome() || !novoNome.trim()" (click)="renomear()">
+        {{ salvandoNome() ? 'Salvando...' : 'Salvar' }}
+      </button>
+      <button type="button" (click)="cancelarRenomear()">Cancelar</button>
+    </div>
+    @if (erroNome()) {
+      <p class="erro">{{ erroNome() }}</p>
+    }
+  } @else {
+    <h2 class="titulo-nome">
+      Imóveis de {{ nome() }}
+      <button type="button" class="link" (click)="abrirRenomear()">renomear</button>
+    </h2>
+  }
 
   @if (carregando()) {
     <p>Carregando...</p>

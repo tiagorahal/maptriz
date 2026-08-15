@@ -82,4 +82,11 @@ export class ImovelService {
       tap(() => this.imoveis.update((lista) => lista.filter((i) => i.id !== id)))
     );
   }
+
+  /** Propaga um novo nome de proprietário para os imóveis já em memória (tarefa 5). */
+  atualizarNomeProprietario(proprietarioId: number, novoNome: string): void {
+    this.imoveis.update((lista) =>
+      lista.map((i) => (i.proprietarioId === proprietarioId ? { ...i, proprietario: novoNome } : i))
+    );
+  }
 }
