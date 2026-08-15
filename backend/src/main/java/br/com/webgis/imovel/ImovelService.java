@@ -52,6 +52,7 @@ public class ImovelService {
 		Imovel imovel = new Imovel();
 		aplicar(imovel, req);
 		aplicarGeometria(imovel, req);
+		verificarSobreposicao(imovel, null);
 		return ImovelResponse.de(repository.save(imovel));
 	}
 
@@ -61,6 +62,7 @@ public class ImovelService {
 				.orElseThrow(() -> new ImovelNaoEncontradoException(id));
 		aplicar(imovel, req);
 		aplicarGeometria(imovel, req);
+		verificarSobreposicao(imovel, id);
 		return ImovelResponse.de(repository.save(imovel));
 	}
 
@@ -107,5 +109,23 @@ public class ImovelService {
 		}
 		imovel.setPoligono(
 				geometriaService.gerarPoligonoWkt(req.latitude(), req.longitude(), largura, comprimento));
+	}
+
+	/**
+	 * Rejeita o cadastro se o polígono do imóvel intersecta o de algum outro já existente.
+	 * A comparação é em memória (JTS); para grande volume, um índice espacial (PostGIS) seria o
+	 * passo seguinte.
+	 */
+	private void verificarSobreposicao(Imovel candidato, Long idIgnorar) {
+		if (candidato.getPoligono() == null) {
+			return;
+		}
+		List<String> existentes = repository.findByPoligonoIsNotNull().stream()
+				.filter(i -> idIgnorar == null || !idIgnorar.equals(i.getId()))
+				.map(Imovel::getPoligono)
+				.toList();
+		if (geometriaService.intersectaAlgum(candidato.getPoligono(), existentes)) {
+			throw new AreaSobrepostaException();
+		}
 	}
 }

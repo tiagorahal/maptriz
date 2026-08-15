@@ -1,5 +1,6 @@
 package br.com.webgis.web;
 
+import br.com.webgis.imovel.AreaSobrepostaException;
 import br.com.webgis.imovel.ImovelNaoEncontradoException;
 import br.com.webgis.imovel.NomeProprietarioEmUsoException;
 import br.com.webgis.imovel.ProprietarioNaoEncontradoException;
@@ -36,6 +37,12 @@ public class ApiExceptionHandler {
 	@ExceptionHandler(NomeProprietarioEmUsoException.class)
 	@ResponseStatus(HttpStatus.CONFLICT)
 	public Map<String, Object> nomeEmUso(NomeProprietarioEmUsoException ex) {
+		return corpo(HttpStatus.CONFLICT, ex.getMessage());
+	}
+
+	@ExceptionHandler(AreaSobrepostaException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	public Map<String, Object> areaSobreposta(AreaSobrepostaException ex) {
 		return corpo(HttpStatus.CONFLICT, ex.getMessage());
 	}
 

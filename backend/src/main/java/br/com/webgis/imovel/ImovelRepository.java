@@ -25,4 +25,7 @@ public interface ImovelRepository extends JpaRepository<Imovel, Long> {
 
 	/** Imóveis ainda sem polígono — usado no backfill de geometria no boot. */
 	List<Imovel> findByPoligonoIsNull();
+
+	/** Imóveis com polígono — usado na verificação de sobreposição. */
+	List<Imovel> findByPoligonoIsNotNull();
 }

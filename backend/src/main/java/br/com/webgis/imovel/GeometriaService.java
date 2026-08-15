@@ -15,6 +15,7 @@ import org.locationtech.proj4j.ProjCoordinate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Geometria dos imóveis sem depender do PostGIS: projeta lat/long (WGS 84) para SRID 31982
@@ -61,6 +62,17 @@ public class GeometriaService {
 		};
 		Polygon poligono = geometryFactory.createPolygon(cantos);
 		return new WKTWriter().write(poligono);
+	}
+
+	/** True se o polígono candidato (WKT) intersecta algum da lista de polígonos existentes (WKT). */
+	public boolean intersectaAlgum(String candidatoWkt, List<String> existentesWkt) {
+		Polygon candidato = lerWkt(candidatoWkt);
+		for (String wkt : existentesWkt) {
+			if (candidato.intersects(lerWkt(wkt))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/** Lê um WKT (SRID 31982) de volta para um polígono JTS. */
