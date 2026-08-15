@@ -21,7 +21,7 @@
   }
 
   <p class="resumo">
-    {{ imoveis().length }} imóvel(is) — área total: {{ areaTotal().toFixed(2) }} m²
+    {{ totalElementos() }} imóveis
   </p>
 
   @if (imoveis().length === 0 && !carregando()) {
@@ -61,4 +61,10 @@
       </tbody>
     </table>
   }
+
+  <div class="paginacao">
+    <button type="button" [disabled]="pagina() === 0" (click)="paginaAnterior()">‹ Anterior</button>
+    <span>Página {{ pagina() + 1 }} de {{ totalPaginas() || 1 }}</span>
+    <button type="button" [disabled]="pagina() + 1 >= totalPaginas()" (click)="proximaPagina()">Próxima ›</button>
+  </div>
 </div>
