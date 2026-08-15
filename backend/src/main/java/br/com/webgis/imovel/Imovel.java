@@ -62,6 +62,10 @@ public class Imovel {
 	@Column(name = "atualizado_em")
 	private OffsetDateTime atualizadoEm;
 
+	/** Polígono do imóvel em WKT, coordenadas em SRID 31982 (gerado de lat/long + dimensões). */
+	@Column(length = 1000)
+	private String poligono;
+
 	@PrePersist
 	void aoCriar() {
 		this.criadoEm = OffsetDateTime.now();

@@ -23,6 +23,10 @@ public record ImovelRequest(
 		@NotNull @DecimalMin("-90") @DecimalMax("90") BigDecimal latitude,
 		@NotNull @DecimalMin("-180") @DecimalMax("180") BigDecimal longitude,
 		@NotNull @Positive BigDecimal areaM2,
-		boolean ativo
+		boolean ativo,
+		// Dimensões (metros) para gerar o polígono georreferenciado (tarefa 8). Opcionais: sem
+		// elas, a geometria vira um quadrado derivado da área.
+		@Positive BigDecimal largura,
+		@Positive BigDecimal comprimento
 ) {
 }

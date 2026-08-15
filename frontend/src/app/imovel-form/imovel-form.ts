@@ -29,6 +29,8 @@ export class ImovelForm {
     longitude: null as unknown as number,
     areaM2: null as unknown as number,
     ativo: true,
+    largura: undefined,
+    comprimento: undefined,
   };
 
   salvar(): void {
