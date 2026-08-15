@@ -23,21 +23,36 @@ export class Mapa implements AfterViewInit, OnDestroy {
     }).addTo(this.map);
 
     this.service.pontos().subscribe((pontos) => {
-      const marcadores: L.CircleMarker[] = [];
+      const camadas: L.Layer[] = [];
       for (const p of pontos) {
-        const marcador = L.circleMarker([p.latitude, p.longitude], {
-          radius: 7,
+        const popup = `<strong>${p.proprietario}</strong><br>${p.municipio}`;
+
+        // Ponto central (sempre visível, mesmo com o mapa afastado).
+        const centro = L.circleMarker([p.latitude, p.longitude], {
+          radius: 6,
           color: '#c0392b',
           weight: 2,
           fillColor: '#e74c3c',
           fillOpacity: 0.85,
-        }).bindPopup(`<strong>${p.proprietario}</strong><br>${p.municipio}`);
-        marcador.addTo(this.map!);
-        marcadores.push(marcador);
+        }).bindPopup(popup);
+        centro.addTo(this.map!);
+        camadas.push(centro);
+
+        // Polígono (a área real do imóvel); aparece ao dar zoom.
+        if (p.poligono?.length) {
+          const area = L.polygon(p.poligono as L.LatLngExpression[], {
+            color: '#c0392b',
+            weight: 1,
+            fillColor: '#e74c3c',
+            fillOpacity: 0.35,
+          }).bindPopup(popup);
+          area.addTo(this.map!);
+          camadas.push(area);
+        }
       }
-      // Enquadra o mapa para mostrar todos os pontos.
-      if (marcadores.length) {
-        this.map!.fitBounds(L.featureGroup(marcadores).getBounds().pad(0.2));
+      // Enquadra o mapa para mostrar todos os imóveis.
+      if (camadas.length) {
+        this.map!.fitBounds(L.featureGroup(camadas).getBounds().pad(0.2));
       }
     });
   }

@@ -37,7 +37,12 @@ public class ImovelService {
 	 */
 	@Transactional(readOnly = true)
 	public List<PontoImovelResponse> pontos() {
-		return repository.findAll().stream().map(PontoImovelResponse::de).toList();
+		return repository.findAll().stream()
+				.map(i -> new PontoImovelResponse(
+						i.getId(), i.getProprietario().getNome(), i.getMunicipio(),
+						i.getLatitude(), i.getLongitude(),
+						i.getPoligono() == null ? null : geometriaService.poligonoParaLatLng(i.getPoligono())))
+				.toList();
 	}
 
 	@Transactional(readOnly = true)

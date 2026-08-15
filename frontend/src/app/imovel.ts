@@ -16,7 +16,11 @@ export interface Imovel {
 }
 
 // O que o formulário envia — sem id, sem proprietarioId (envia o nome) e sem auditoria.
-export type ImovelInput = Omit<Imovel, 'id' | 'proprietarioId' | 'criadoEm' | 'atualizadoEm'>;
+// Largura/comprimento (metros) são opcionais e geram o polígono georreferenciado (tarefa 8).
+export type ImovelInput = Omit<Imovel, 'id' | 'proprietarioId' | 'criadoEm' | 'atualizadoEm'> & {
+  largura?: number;
+  comprimento?: number;
+};
 
 // Envelope de paginação retornado pela API (espelha o PageResponse do backend).
 export interface Pagina<T> {
@@ -34,4 +38,5 @@ export interface PontoImovel {
   municipio: string;
   latitude: number;
   longitude: number;
+  poligono?: number[][]; // vértices [lat, lng]
 }

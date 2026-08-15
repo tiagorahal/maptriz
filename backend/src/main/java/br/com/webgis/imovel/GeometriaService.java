@@ -15,6 +15,7 @@ import org.locationtech.proj4j.ProjCoordinate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +29,7 @@ public class GeometriaService {
 	private static final int SRID_31982 = 31982;
 
 	private final CoordinateTransform wgs84ParaUtm;
+	private final CoordinateTransform utmParaWgs84;
 	private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), SRID_31982);
 
 	public GeometriaService() {
@@ -37,7 +39,9 @@ public class GeometriaService {
 		CoordinateReferenceSystem utm22s = crs.createFromParameters(
 				"EPSG:31982",
 				"+proj=utm +zone=22 +south +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs");
-		this.wgs84ParaUtm = new CoordinateTransformFactory().createTransform(wgs84, utm22s);
+		CoordinateTransformFactory fabrica = new CoordinateTransformFactory();
+		this.wgs84ParaUtm = fabrica.createTransform(wgs84, utm22s);
+		this.utmParaWgs84 = fabrica.createTransform(utm22s, wgs84);
 	}
 
 	/**
@@ -84,10 +88,26 @@ public class GeometriaService {
 		}
 	}
 
+	/** Converte o polígono (WKT, SRID 31982) para os vértices [lat, lng] em WGS 84, para o mapa. */
+	public List<double[]> poligonoParaLatLng(String wkt) {
+		List<double[]> vertices = new ArrayList<>();
+		for (Coordinate c : lerWkt(wkt).getExteriorRing().getCoordinates()) {
+			ProjCoordinate destino = inverter(c.x, c.y);
+			vertices.add(new double[] { destino.y, destino.x }); // [lat, lng]
+		}
+		return vertices;
+	}
+
 	// O transform do proj4j não é thread-safe: sincroniza a projeção (é rápida).
 	private synchronized ProjCoordinate projetar(double longitude, double latitude) {
 		ProjCoordinate destino = new ProjCoordinate();
 		wgs84ParaUtm.transform(new ProjCoordinate(longitude, latitude), destino);
+		return destino;
+	}
+
+	private synchronized ProjCoordinate inverter(double x, double y) {
+		ProjCoordinate destino = new ProjCoordinate();
+		utmParaWgs84.transform(new ProjCoordinate(x, y), destino);
 		return destino;
 	}
 }

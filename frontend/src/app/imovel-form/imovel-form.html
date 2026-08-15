@@ -25,6 +25,11 @@
     </div>
 
     <div class="linha">
+      <input type="number" name="largura" placeholder="Largura (m) — opcional" [(ngModel)]="form.largura">
+      <input type="number" name="comprimento" placeholder="Comprimento (m) — opcional" [(ngModel)]="form.comprimento">
+    </div>
+
+    <div class="linha">
       <label><input type="checkbox" name="ativo" [(ngModel)]="form.ativo"> Ativo</label>
     </div>
 
