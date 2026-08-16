@@ -1,0 +1,51 @@
+@if (carregando()) {
+  <div class="caixa"><p>Carregando...</p></div>
+} @else if (naoEncontrado()) {
+  <div class="caixa">
+    <p class="erro">Imóvel não encontrado.</p>
+    <a class="botao" routerLink="/imoveis">Voltar para a listagem</a>
+  </div>
+} @else {
+  <div class="caixa">
+    <h2>Editar imóvel</h2>
+
+    <form #f="ngForm" (ngSubmit)="salvar()">
+      <div class="linha">
+        <input class="largo" name="proprietario" placeholder="Proprietário" required
+               [(ngModel)]="form.proprietario">
+      </div>
+
+      <div class="linha">
+        <input name="municipio" placeholder="Município" required [(ngModel)]="form.municipio">
+        <input name="uf" placeholder="UF" required maxlength="2" [(ngModel)]="form.uf">
+        <input name="bairro" placeholder="Bairro" required [(ngModel)]="form.bairro">
+      </div>
+
+      <div class="linha">
+        <input class="largo" name="rua" placeholder="Rua" required [(ngModel)]="form.rua">
+        <input name="numero" placeholder="Número" required [(ngModel)]="form.numero">
+      </div>
+
+      <div class="linha">
+        <input type="number" name="latitude" placeholder="Latitude" required [(ngModel)]="form.latitude">
+        <input type="number" name="longitude" placeholder="Longitude" required [(ngModel)]="form.longitude">
+        <input type="number" name="areaM2" placeholder="Área m²" required [(ngModel)]="form.areaM2">
+      </div>
+
+      <div class="linha">
+        <label><input type="checkbox" name="ativo" [(ngModel)]="form.ativo"> Ativo</label>
+      </div>
+
+      @if (erro()) {
+        <p class="erro">{{ erro() }}</p>
+      }
+
+      <div class="linha">
+        <button type="submit" [disabled]="f.invalid || salvando()">
+          {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a class="botao" routerLink="/imoveis">Cancelar</a>
+      </div>
+    </form>
+  </div>
+}

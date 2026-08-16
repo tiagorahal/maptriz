@@ -1,59 +1,52 @@
-# Frontend
+# Frontend — WebGIS
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.3.
+Interface do cadastro de imóveis. **Angular 22** (componentes standalone, **signals**, aplicação
+**zoneless**), TypeScript, **Leaflet** + OpenStreetMap para o mapa.
 
-## Development server
+## Como rodar
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Pré-requisito: **Node.js 20+**. O backend precisa estar no ar em `http://localhost:8080`.
 
 ```bash
-ng generate component component-name
+npm install
+npm start        # http://localhost:4200
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Arquitetura
 
-```bash
-ng generate --help
-```
+Telas standalone com roteamento, e o estado vivendo em serviços (`signal`s) como fonte de verdade:
 
-## Building
+| Rota | Componente | Papel |
+|---|---|---|
+| `/imoveis` | `ImoveisLista` | listagem paginada, filtros, excluir |
+| `/imoveis/novo` | `ImovelForm` | cadastro |
+| `/imoveis/:id/editar` | `ImovelEditar` | edição dedicada |
+| `/proprietarios` | `ProprietariosLista` | proprietários com contagem de imóveis |
+| `/proprietarios/:id` | `ProprietarioDetalhe` | imóveis do proprietário + renomear |
+| `/mapa` | `Mapa` | imóveis como pontos no mapa |
 
-To build the project run:
+- `ImovelService` — acesso à API de imóveis + estado (página atual, filtros, paginação) em signals.
+- `ProprietarioService` — proprietários + renomear (propaga o novo nome para o cache de imóveis).
 
-```bash
-ng build
-```
+## Decisões
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **Extração do `ImovelService` com estado.** Tirar o `HttpClient` e as URLs de dentro do
+  componente foi a base para tudo que veio depois (cache, filtros, paginação). O estado é um
+  `signal`, fonte de verdade única.
+- **Filtros server-side com debounce.** A busca só dispara 300ms após a última tecla (e só se
+  algo mudou), casando com a paginação do backend — pensando no cenário de grande volume.
+- **Edição sem novo request ao voltar (tarefa 3).** A lista carrega uma vez por sessão
+  (`carregarSeNecessario`); a edição lê o imóvel da memória e, ao salvar, atualiza o item no
+  próprio estado. Voltar para a listagem **não refaz o GET** — só reaproveita o que já está lá.
+  O estado dos filtros também vive no service, então a navegação preserva tudo.
+- **Estado de UI como `signal` (app zoneless).** Sem Zone.js, um campo comum alterado num callback
+  assíncrono não dispara change detection e a tela "trava" (ex.: um `Carregando...` que nunca some).
+  Por isso todo estado reativo lido no template (`carregando`, `salvando`, `erro`, `mensagem`,
+  `nome`…) é `signal`. Esse foi um bug real, encontrado testando a página de proprietários.
+- **Paginação clássica.** Controles Anterior/Próxima sobre o `PageResponse` do backend — só a
+  página atual é renderizada (20 linhas em vez de milhares). Filtrar volta para a primeira página.
+- **Renomear propaga para o cache.** Ao renomear um proprietário, o novo nome é aplicado tanto na
+  lista de proprietários quanto nos imóveis já carregados em memória (o backend já propagou via FK).
+- **Mapa com `circleMarker`.** Os imóveis são plotados como círculos, o que evita o problema
+  clássico dos ícones padrão do Leaflet quebrarem com bundler; `fitBounds` enquadra os pontos e
+  cada um tem popup com proprietário e município.

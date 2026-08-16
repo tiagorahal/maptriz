@@ -1,7 +1,5 @@
--- Seed idempotente: so insere quando a tabela esta vazia.
--- Como spring.sql.init.mode=always roda este arquivo a cada boot e o ddl-auto=update nao
--- recria o schema, um INSERT solto reinseria os 12 imoveis toda subida (12, 24, 36...).
--- O WHERE NOT EXISTS abaixo garante que o seed rode uma unica vez.
+-- Popula os 12 imóveis de exemplo. O WHERE NOT EXISTS mantém o seed idempotente: se a tabela já
+-- tiver dados (ex.: base antiga), não duplica.
 INSERT INTO imovel
     (proprietario, municipio, uf, bairro, rua, numero, latitude, longitude, area_m2, ativo, criado_em, atualizado_em)
 SELECT *

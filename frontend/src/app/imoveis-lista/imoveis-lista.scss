@@ -1,0 +1,109 @@
+.caixa {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.caixa h2 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.botao {
+  display: inline-block;
+  padding: 5px 12px;
+  background: #34495e;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.filtros {
+  margin: 10px 0;
+}
+
+.filtros input {
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+}
+
+.filtros button {
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.resumo {
+  font-size: 13px;
+  color: #555;
+}
+
+.msg {
+  color: green;
+}
+
+.vazio {
+  color: #888;
+  font-style: italic;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: left;
+}
+
+table th {
+  background: #eee;
+}
+
+button {
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.acoes {
+  white-space: nowrap;
+}
+
+.acoes a {
+  margin-right: 8px;
+  color: #34495e;
+}
+
+.paginacao {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.paginacao button {
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.paginacao button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.paginacao span {
+  font-size: 13px;
+  color: #555;
+}

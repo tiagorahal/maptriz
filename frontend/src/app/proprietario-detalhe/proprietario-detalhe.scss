@@ -1,0 +1,76 @@
+.caixa {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.caixa h2 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.voltar {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #34495e;
+  text-decoration: none;
+}
+
+.titulo-nome .link {
+  margin-left: 10px;
+  font-size: 12px;
+  font-weight: normal;
+  background: none;
+  border: none;
+  color: #2d6cb3;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.renomear {
+  margin-bottom: 10px;
+}
+
+.renomear input {
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+}
+
+.renomear button {
+  padding: 5px 12px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.erro {
+  color: #c0392b;
+}
+
+.resumo {
+  font-size: 13px;
+  color: #555;
+}
+
+.vazio {
+  color: #888;
+  font-style: italic;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 5px;
+  text-align: left;
+}
+
+table th {
+  background: #eee;
+}

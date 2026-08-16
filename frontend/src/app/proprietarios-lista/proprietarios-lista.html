@@ -1,0 +1,28 @@
+<div class="caixa">
+  <h2>Proprietários</h2>
+
+  @if (carregando()) {
+    <p>Carregando...</p>
+  }
+
+  @if (proprietarios().length === 0 && !carregando()) {
+    <p class="vazio">Nenhum proprietário cadastrado.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Proprietário</th>
+          <th>Imóveis</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of proprietarios(); track p.id) {
+          <tr>
+            <td><a [routerLink]="['/proprietarios', p.id]">{{ p.nome }}</a></td>
+            <td>{{ p.quantidadeImoveis }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

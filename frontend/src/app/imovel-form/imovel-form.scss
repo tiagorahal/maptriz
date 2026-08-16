@@ -1,0 +1,44 @@
+.caixa {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.caixa h2 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.linha {
+  margin-bottom: 10px;
+}
+
+.linha input,
+.linha select {
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+}
+
+.linha input.largo {
+  width: 40%;
+}
+
+.linha button {
+  padding: 5px 12px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.botao {
+  display: inline-block;
+  padding: 5px 12px;
+  background: #7f8c8d;
+  color: #fff;
+  text-decoration: none;
+}
+
+.erro {
+  color: #c0392b;
+}
